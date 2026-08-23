@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio de Osteología · Escape Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0b0f14;
+    --panel: #121820;
+    --panel-2: #161f2a;
+    --line: #24313f;
+    --bone: #e9e3d2;
+    --bone-dim: #a9a695;
+    --xray: #6fd1ff;
+    --xray-dim: #2c5266;
+    --amber: #d8a659;
+    --danger: #d9695f;
+    --good: #7fc99a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(111,209,255,0.08), transparent 55%),
+      radial-gradient(ellipse at 100% 110%, rgba(216,166,89,0.06), transparent 50%),
+      var(--bg);
+    color:var(--bone);
+    font-family:'Inter', sans-serif;
+    min-height:100%;
+    display:flex;
+  }
+  ::selection{ background: var(--xray-dim); color:#fff; }
+
+  /* ---------- SPINE PROGRESS (signature element) ---------- */
+  .spine-rail{
+    width:76px;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:28px 0;
+    gap:6px;
+    border-right:1px solid var(--line);
+    background:linear-gradient(180deg, var(--panel), var(--bg));
+  }
+  .spine-label{
+    writing-mode:vertical-rl;
+    text-orientation:mixed;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    letter-spacing:2px;
+    color:var(--bone-dim);
+    margin-bottom:14px;
+  }
+  .vertebra{
+    width:34px;
+    height:20px;
+    border-radius:9px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    position:relative;
+    transition:all .5s ease;
+  }
+  .vertebra::after{
+    content:'';
+    position:absolute;
+    inset:0;
+    margin:auto;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--line);
+    transition:all .5s ease;
+  }
+  .vertebra.lit{
+    background:linear-gradient(180deg, rgba(111,209,255,0.18), rgba(111,209,255,0.04));
+    border-color:var(--xray);
+    box-shadow:0 0 14px rgba(111,209,255,0.35);
+  }
+  .vertebra.lit::after{ background:var(--xray); box-shadow:0 0 8px var(--xray); }
+  .vertebra.current{
+    border-color:var(--amber);
+    box-shadow:0 0 14px rgba(216,166,89,0.4);
+  }
+  .vertebra.current::after{ background:var(--amber); box-shadow:0 0 8px var(--amber); }
+
+  /* ---------- MAIN AREA ---------- */
+  main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    max-width:920px;
+    margin:0 auto;
+    padding:36px 40px 60px;
+    width:100%;
+  }
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:28px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:18px;
+  }
+  .brand{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:3px;
+    color:var(--xray);
+    text-transform:uppercase;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:var(--bone-dim);
+    margin-top:4px;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .timer{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:28px;
+    color:var(--amber);
+    text-shadow:0 0 12px rgba(216,166,89,0.5);
+    letter-spacing:2px;
+  }
+  .timer.low{ color:var(--danger); text-shadow:0 0 12px rgba(217,105,95,0.6); }
+
+  h1.room-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(28px, 4vw, 40px);
+    margin:0 0 6px;
+    line-height:1.1;
+  }
+  .room-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--xray);
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .briefing{
+    color:var(--bone-dim);
+    font-size:15px;
+    line-height:1.6;
+    max-width:640px;
+    margin-bottom:28px;
+  }
+
+  .challenge-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:22px 24px;
+    margin-bottom:16px;
+  }
+  .q-text{ font-size:15px; margin-bottom:12px; font-weight:500; }
+  .q-text b{ color:var(--xray); font-weight:600; }
+  .options{ display:flex; flex-wrap:wrap; gap:8px; }
+  .opt-btn{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--bone);
+    padding:9px 14px;
+    border-radius:7px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .opt-btn:hover{ border-color:var(--xray); }
+  .opt-btn.selected{ border-color:var(--xray); background:rgba(111,209,255,0.1); }
+  .opt-btn.correct{ border-color:var(--good); background:rgba(127,201,154,0.12); color:var(--good); }
+  .opt-btn.incorrect{ border-color:var(--danger); background:rgba(217,105,95,0.12); color:var(--danger); }
+  .opt-btn:disabled{ cursor:default; }
+
+  select.match-select{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--bone);
+    padding:8px 10px;
+    border-radius:7px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+  }
+  select.match-select.correct{ border-color:var(--good); }
+  select.match-select.incorrect{ border-color:var(--danger); }
+
+  .order-list{ display:flex; flex-direction:column; gap:8px; }
+  .order-item{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:grab;
+    font-size:14px;
+  }
+  .order-item .handle{ color:var(--bone-dim); font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .order-item.dragging{ opacity:0.4; }
+
+  .verify-row{ display:flex; gap:10px; align-items:center; margin-top:20px; flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:11px 20px;
+    border-radius:7px;
+    border:1px solid var(--xray);
+    background:transparent;
+    color:var(--xray);
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn:hover{ background:rgba(111,209,255,0.1); }
+  .btn:disabled{ opacity:0.35; cursor:not-allowed; }
+  .feedback{ font-size:13px; font-family:'IBM Plex Mono',monospace; }
+  .feedback.good{ color:var(--good); }
+  .feedback.bad{ color:var(--danger); }
+
+  .lock-panel{
+    margin-top:24px;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid var(--amber);
+    border-radius:10px;
+    padding:22px 24px;
+    box-shadow:0 0 30px rgba(216,166,89,0.06) inset;
+  }
+  .lock-panel.disabled{ opacity:0.4; pointer-events:none; }
+  .lock-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:2px;
+    color:var(--amber);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .lock-hint{ font-size:13px; color:var(--bone-dim); margin-bottom:14px; line-height:1.5; }
+  .lock-row{ display:flex; gap:10px; }
+  .lock-input{
+    flex:1;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--amber);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:18px;
+    letter-spacing:4px;
+    padding:10px 14px;
+    border-radius:7px;
+    text-transform:uppercase;
+  }
+  .lock-input:focus{ outline:none; border-color:var(--amber); }
+  .btn-amber{
+    border-color:var(--amber); color:var(--amber);
+  }
+  .btn-amber:hover{ background:rgba(216,166,89,0.12); }
+
+  .intro-screen, .end-screen{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-height:70vh;
+    max-width:600px;
+  }
+  .intro-screen h1, .end-screen h1{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.05;
+    margin:0 0 18px;
+  }
+  .intro-screen p, .end-screen p{ color:var(--bone-dim); font-size:15px; line-height:1.7; margin-bottom:26px;}
+  .final-code-display{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:15px;
+    color:var(--xray);
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 18px;
+    margin-bottom:22px;
+  }
+
+  @media (max-width:640px){
+    .spine-rail{ width:44px; }
+    .spine-label{ display:none; }
+    main{ padding:24px 18px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="spine-rail" id="spineRail">
+  <div class="spine-label">PROGRESO</div>
+</div>
+
+<main id="app"></main>
+
+<script>
+const ROOMS = [
+  {
+    id: 1,
+    title: "Clasificación de los huesos",
+    eyebrow: "Sala 01 · Candado 1",
+    briefing: "Cada hueso del cuerpo se clasifica según su forma. Identifica correctamente la clasificación de cada hueso listado. Al acertar los cinco, obtendrás una letra por cada uno — ordénalas para formar el código.",
+    type: "mcq-set",
+    questions: [
+      { q: "Fémur", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Largo", letter: "L" },
+      { q: "Rótula (patela)", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Sesamoideo", letter: "S" },
+      { q: "Vértebra", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Irregular", letter: "I" },
+      { q: "Esternón", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Plano", letter: "P" },
+      { q: "Escafoides (hueso del carpo)", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Corto", letter: "C" }
+    ],
+    code: "CLIPS",
+    hint: "Las letras obtenidas son: L, S, I, P, C. Ordénalas para formar una palabra de 5 letras."
+  },
+  {
+    id: 2,
+    title: "Esqueleto axial y apendicular",
+    eyebrow: "Sala 02 · Candado 2",
+    briefing: "El esqueleto humano se divide en axial (eje central del cuerpo) y apendicular (extremidades y cinturas). Clasifica correctamente cada hueso.",
+    type: "toggle-classify",
+    items: [
+      { name: "Cráneo", answer: "Axial" },
+      { name: "Costillas", answer: "Axial" },
+      { name: "Columna vertebral", answer: "Axial" },
+      { name: "Clavícula", answer: "Apendicular" },
+      { name: "Húmero", answer: "Apendicular" },
+      { name: "Coxal (cadera)", answer: "Apendicular" },
+      { name: "Fémur", answer: "Apendicular" },
+      { name: "Esternón", answer: "Axial" }
+    ],
+    code: "206",
+    hint: "El código es el número total de huesos en el esqueleto de un adulto."
+  },
+  {
+    id: 3,
+    title: "Funciones del sistema óseo",
+    eyebrow: "Sala 03 · Candado 3",
+    briefing: "El sistema óseo cumple varias funciones vitales más allá de sostener el cuerpo. Responde correctamente cada pregunta.",
+    type: "mcq-set",
+    questions: [
+      { q: "¿Qué función ósea se relaciona con la producción de células sanguíneas?", options: ["Protección","Hematopoyesis","Sostén","Palanca"], answer: "Hematopoyesis" },
+      { q: "¿Qué función permite el movimiento junto con los músculos?", options: ["Mecánica (palanca)","Metabólica","Hematopoyética","Sostén"], answer: "Mecánica (palanca)" },
+      { q: "¿Qué minerales almacenan principalmente los huesos?", options: ["Hierro y zinc","Calcio y fósforo","Sodio y potasio","Magnesio y yodo"], answer: "Calcio y fósforo" },
+      { q: "¿Qué función cumplen el cráneo y la caja torácica?", options: ["Protección de órganos","Hematopoyesis","Palanca","Almacenamiento de grasa"], answer: "Protección de órganos" },
+      { q: "¿Qué función le da al cuerpo su forma general?", options: ["Sostén / soporte","Metabólica","Hematopoyesis","Protección"], answer: "Sostén / soporte" }
+    ],
+    code: "54321",
+    hint: "Contaste 5 funciones correctamente. El código es la cuenta regresiva desde ese número: 5-4-3-2-1."
+  },
+  {
+    id: 4,
+    title: "Regiones anatómicas longitudinales",
+    eyebrow: "Sala 04 · Candado 4",
+    briefing: "Todo hueso largo se divide en regiones a lo largo de su eje. Ordénalas desde el extremo proximal (arriba) hasta el distal (abajo), tal como aparecen en un fémur.",
+    type: "order",
+    items: [
+      { id: "epi-prox", label: "Epífisis proximal" },
+      { id: "meta-prox", label: "Metáfisis proximal" },
+      { id: "dia", label: "Diáfisis" },
+      { id: "meta-dist", label: "Metáfisis distal" },
+      { id: "epi-dist", label: "Epífisis distal" }
+    ],
+    correctOrder: ["epi-prox","meta-prox","dia","meta-dist","epi-dist"],
+    code: "DIAFISIS",
+    hint: "La región central que ordenaste en la posición 3 es también el código de este candado."
+  }
+];
+
+let currentRoom = -1; // -1 = intro
+let timeLeft = 25 * 60;
+let timerInterval = null;
+let roomState = {}; // per-room interaction state
+
+function startTimer(){
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      timeLeft = 0;
+    }
+    renderTimer();
+  }, 1000);
+}
+function renderTimer(){
+  const el = document.getElementById('timerDisplay');
+  if(!el) return;
+  const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+  const s = String(timeLeft%60).padStart(2,'0');
+  el.textContent = `${m}:${s}`;
+  el.classList.toggle('low', timeLeft <= 120);
+}
+
+function renderSpine(){
+  const rail = document.getElementById('spineRail');
+  rail.querySelectorAll('.vertebra').forEach(v => v.remove());
+  ROOMS.forEach((r, i) => {
+    const v = document.createElement('div');
+    v.className = 'vertebra';
+    if(i < currentRoom) v.classList.add('lit');
+    if(i === currentRoom) v.classList.add('current');
+    rail.appendChild(v);
+  });
+}
+
+function goToRoom(idx){
+  currentRoom = idx;
+  renderSpine();
+  render();
+}
+
+function render(){
+  const app = document.getElementById('app');
+  if(currentRoom === -1){ renderIntro(app); return; }
+  if(currentRoom >= ROOMS.length){ renderEnd(app); return; }
+  renderRoom(app, ROOMS[currentRoom]);
+}
+
+function renderIntro(app){
+  app.innerHTML = `
+    <div class="intro-screen">
+      <div class="room-eyebrow">Laboratorio de Osteología · Facultad de Ciencias de la Salud</div>
+      <h1>Atrapado en el laboratorio</h1>
+      <p>Son las 23:40. Quedaste encerrado terminando un modelo de esqueleto para tu evaluación. La puerta principal tiene un sistema de 4 candados que solo se abren resolviendo retos sobre el sistema óseo. Tienes 25 minutos antes de que se active la alarma nocturna.</p>
+      <div>
+        <button class="btn" onclick="startGame()">Comenzar escape room →</button>
+      </div>
+    </div>`;
+}
+
+function startGame(){
+  goToRoom(0);
+  startTimer();
+}
+
+function renderEnd(app){
+  clearInterval(timerInterval);
+  app.innerHTML = `
+    <div class="end-screen">
+      <div class="room-eyebrow">Puerta principal</div>
+      <h1>Has escapado.</h1>
+      <p>Superaste las cuatro salas del laboratorio: clasificación ósea, esqueleto axial/apendicular, funciones del sistema óseo y regiones anatómicas longitudinales. Dominas la unidad completa.</p>
+      <div>
+        <button class="btn" onclick="location.reload()">Reiniciar</button>
+      </div>
+    </div>`;
+}
+
+function renderRoom(app, room){
+  roomState[room.id] = roomState[room.id] || { verified: {}, correctCount: 0 };
+  app.innerHTML = `
+    <header class="top">
+      <div>
+        <div class="brand">SISTEMA ÓSEO // PROTOCOLO DE SALIDA</div>
+        <div class="brand-sub">Sala ${room.id} de ${ROOMS.length}</div>
+      </div>
+      <div class="timer" id="timerDisplay"></div>
+    </header>
+    <div class="room-eyebrow">${room.eyebrow}</div>
+    <h1 class="room-title">${room.title}</h1>
+    <p class="briefing">${room.briefing}</p>
+    <div id="challengeArea"></div>
+    <div class="lock-panel disabled" id="lockPanel">
+      <div class="lock-label">Panel de candado</div>
+      <div class="lock-hint" id="lockHint">Resuelve el reto para desbloquear la pista del código.</div>
+      <div class="lock-row">
+        <input class="lock-input" id="lockInput" placeholder="CÓDIGO" ${false ? '' : 'disabled'}>
+        <button class="btn btn-amber" id="lockBtn" onclick="tryUnlock(${room.id})" disabled>Desbloquear</button>
+      </div>
+      <div class="feedback" id="lockFeedback" style="margin-top:10px;"></div>
+    </div>
+  `;
+  renderTimer();
+  renderChallenge(room);
+}
+
+function renderChallenge(room){
+  const area = document.getElementById('challengeArea');
+  if(room.type === 'mcq-set'){
+    area.innerHTML = room.questions.map((q, qi) => `
+      <div class="challenge-card">
+        <div class="q-text">${qi+1}. ${q.q}</div>
+        <div class="options" id="opts-${qi}">
+          ${q.options.map(o => `<button class="opt-btn" onclick="selectMcq(${qi}, this, '${escapeStr(o)}')">${o}</button>`).join('')}
+        </div>
+      </div>
+    `).join('') + `
+      <div class="verify-row">
+        <button class="btn" onclick="verifyMcqSet(${room.id})">Verificar respuestas</button>
+        <span class="feedback" id="verifyFeedback"></span>
+      </div>`;
+  }
+  else if(room.type === 'toggle-classify'){
+    area.innerHTML = `
+      <div class="challenge-card">
+        ${room.items.map((it, i) => `
+          <div class="q-text" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+            <span>${it.name}</span>
+            <span class="options">
+              <button class="opt-btn" id="tc-${i}-axial" onclick="selectToggle(${i}, 'Axial')">Axial</button>
+              <button class="opt-btn" id="tc-${i}-apendicular" onclick="selectToggle(${i}, 'Apendicular')">Apendicular</button>
+            </span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="verify-row">
+        <button class="btn" onclick="verifyToggle(${room.id})">Verificar clasificación</button>
+        <span class="feedback" id="verifyFeedback"></span>
+      </div>`;
+  }
+  else if(room.type === 'order'){
+    area.innerHTML = `
+      <div class="challenge-card">
+        <div class="q-text">Arrastra los elementos para ordenarlos de <b>proximal</b> a <b>distal</b>:</div>
+        <div class="order-list" id="orderList">
+          ${shuffle([...room.items]).map((it,i) => `
+            <div class="order-item" draggable="true" data-id="${it.id}">
+              <span class="handle">⠿</span> ${it.label}
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="verify-row">
+        <button class="btn" onclick="verifyOrder(${room.id})">Verificar orden</button>
+        <span class="feedback" id="verifyFeedback"></span>
+      </div>`;
+    enableDrag();
+  }
+  else if(room.type === 'match-select'){
+    area.innerHTML = `
+      <div class="challenge-card">
+        ${room.items.map((it,i) => `
+          <div class="q-text" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+            <span>${it.name}</span>
+            <select class="match-select" id="ms-${i}">
+              <option value="">Selecciona...</option>
+              ${it.options.map(o => `<option value="${escapeStr(o)}">${o}</option>`).join('')}
+            </select>
+          </div>
+        `).join('')}
+      </div>
+      <div class="verify-row">
+        <button class="btn" onclick="verifyMatch(${room.id})">Verificar relación</button>
+        <span class="feedback" id="verifyFeedback"></span>
+      </div>`;
+  }
+}
+
+// ---- MCQ set ----
+let mcqSelections = {};
+function selectMcq(qi, btn, value){
+  mcqSelections[qi] = value;
+  const group = document.getElementById(`opts-${qi}`);
+  group.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function verifyMcqSet(roomId){
+  const room = ROOMS.find(r => r.id === roomId);
+  let correct = 0;
+  room.questions.forEach((q, qi) => {
+    const group = document.getElementById(`opts-${qi}`);
+    const selected = mcqSelections[qi];
+    group.querySelectorAll('.opt-btn').forEach(b => {
+      b.disabled = true;
+      if(b.textContent === q.answer) b.classList.add('correct');
+      else if(b.textContent === selected && selected !== q.answer) b.classList.add('incorrect');
+    });
+    if(selected === q.answer) correct++;
+  });
+  const fb = document.getElementById('verifyFeedback');
+  if(correct === room.questions.length){
+    fb.textContent = `Correcto: ${correct}/${room.questions.length}. Candado desbloqueable.`;
+    fb.className = 'feedback good';
+    unlockLockPanel(room);
+  } else {
+    fb.textContent = `${correct}/${room.questions.length} correctas. Revisa las marcadas en rojo e inténtalo de nuevo.`;
+    fb.className = 'feedback bad';
+    setTimeout(() => { mcqSelections = {}; renderChallenge(room); }, 1800);
+  }
+}
+
+// ---- Toggle classify ----
+let toggleSelections = {};
+function selectToggle(i, value){
+  toggleSelections[i] = value;
+  document.getElementById(`tc-${i}-axial`).classList.toggle('selected', value === 'Axial');
+  document.getElementById(`tc-${i}-apendicular`).classList.toggle('selected', value === 'Apendicular');
+}
+function verifyToggle(roomId){
+  const room = ROOMS.find(r => r.id === roomId);
+  let correct = 0;
+  room.items.forEach((it, i) => {
+    const chosen = toggleSelections[i];
+    const axialBtn = document.getElementById(`tc-${i}-axial`);
+    const apeBtn = document.getElementById(`tc-${i}-apendicular`);
+    [axialBtn, apeBtn].forEach(b => b.disabled = true);
+    const correctBtn = it.answer === 'Axial' ? axialBtn : apeBtn;
+    correctBtn.classList.add('correct');
+    if(chosen && chosen !== it.answer){
+      (it.answer === 'Axial' ? apeBtn : axialBtn).classList.add('incorrect');
+    }
+    if(chosen === it.answer) correct++;
+  });
+  const fb = document.getElementById('verifyFeedback');
+  if(correct === room.items.length){
+    fb.textContent = `Correcto: ${correct}/${room.items.length}. Candado desbloqueable.`;
+    fb.className = 'feedback good';
+    unlockLockPanel(room);
+  } else {
+    fb.textContent = `${correct}/${room.items.length} correctas. Inténtalo de nuevo.`;
+    fb.className = 'feedback bad';
+    setTimeout(() => { toggleSelections = {}; renderChallenge(room); }, 1800);
+  }
+}
+
+// ---- Order ----
+let dragSrc = null;
+function enableDrag(){
+  const list = document.getElementById('orderList');
+  list.querySelectorAll('.order-item').forEach(item => {
+    item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging'); });
+    item.addEventListener('dragend', e => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      const dragging = list.querySelector('.dragging');
+      const after = getDragAfterElement(list, e.clientY);
+      if(after == null) list.appendChild(dragging);
+      else list.insertBefore(dragging, after);
+    });
+  });
+}
+function getDragAfterElement(container, y){
+  const items = [...container.querySelectorAll('.order-item:not(.dragging)')];
+  return items.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if(offset < 0 && offset > closest.offset) return { offset, element: child };
+    else return closest;
+  }, { offset: -Infinity }).element;
+}
+function verifyOrder(roomId){
+  const room = ROOMS.find(r => r.id === roomId);
+  const list = document.getElementById('orderList');
+  const currentIds = [...list.querySelectorAll('.order-item')].map(el => el.dataset.id);
+  const fb = document.getElementById('verifyFeedback');
+  const isCorrect = JSON.stringify(currentIds) === JSON.stringify(room.correctOrder);
+  if(isCorrect){
+    fb.textContent = 'Orden correcto. Candado desbloqueable.';
+    fb.className = 'feedback good';
+    list.querySelectorAll('.order-item').forEach(el => el.setAttribute('draggable', 'false'));
+    unlockLockPanel(room);
+  } else {
+    fb.textContent = 'El orden aún no es correcto. Ajusta y vuelve a verificar.';
+    fb.className = 'feedback bad';
+  }
+}
+
+// ---- Match select ----
+function verifyMatch(roomId){
+  const room = ROOMS.find(r => r.id === roomId);
+  let correct = 0;
+  room.items.forEach((it, i) => {
+    const sel = document.getElementById(`ms-${i}`);
+    sel.classList.remove('correct','incorrect');
+    if(sel.value === it.answer){ sel.classList.add('correct'); correct++; }
+    else if(sel.value !== ''){ sel.classList.add('incorrect'); }
+  });
+  const fb = document.getElementById('verifyFeedback');
+  if(correct === room.items.length){
+    fb.textContent = `Correcto: ${correct}/${room.items.length}. Candado desbloqueable.`;
+    fb.className = 'feedback good';
+    unlockLockPanel(room);
+  } else {
+    fb.textContent = `${correct}/${room.items.length} correctas. Ajusta las marcadas en rojo.`;
+    fb.className = 'feedback bad';
+  }
+}
+
+// ---- Lock panel ----
+function unlockLockPanel(room){
+  const panel = document.getElementById('lockPanel');
+  panel.classList.remove('disabled');
+  document.getElementById('lockHint').textContent = room.hint;
+  document.getElementById('lockInput').disabled = false;
+  document.getElementById('lockBtn').disabled = false;
+}
+function tryUnlock(roomId){
+  const room = ROOMS.find(r => r.id === roomId);
+  const input = document.getElementById('lockInput');
+  const fb = document.getElementById('lockFeedback');
+  const value = input.value.trim().toUpperCase().replace(/\s+/g,'');
+  if(value === room.code){
+    fb.textContent = '✓ Candado abierto. Avanzando a la siguiente sala...';
+    fb.className = 'feedback good';
+    setTimeout(() => goToRoom(currentRoom + 1), 1000);
+  } else {
+    fb.textContent = '✗ Código incorrecto. Revisa la pista.';
+    fb.className = 'feedback bad';
+  }
+}
+
+// ---- utils ----
+function escapeStr(s){ return s.replace(/'/g, "\\'"); }
+function shuffle(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+renderSpine();
+render();
+</script>
+</body>
+</html>
