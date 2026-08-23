@@ -5,86 +5,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Laboratorio de Osteología · Escape Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0b0f14;
-    --panel: #121820;
-    --panel-2: #161f2a;
-    --line: #24313f;
-    --bone: #e9e3d2;
-    --bone-dim: #a9a695;
-    --xray: #6fd1ff;
-    --xray-dim: #2c5266;
-    --amber: #d8a659;
-    --danger: #d9695f;
-    --good: #7fc99a;
+    --bg: #fdf6ec;
+    --panel: #ffffff;
+    --panel-2: #fff2e2;
+    --line: #f0dfc7;
+    --ink: #5c4b3a;
+    --ink-dim: #a3907c;
+    --blue: #8ec9e0;
+    --blue-dim: #eaf5fa;
+    --pink: #f0a6a0;
+    --peach: #f5b878;
+    --danger: #ef8b83;
+    --good: #8fc9a0;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;height:100%;}
   body{
     background:
-      radial-gradient(ellipse at 20% -10%, rgba(111,209,255,0.08), transparent 55%),
-      radial-gradient(ellipse at 100% 110%, rgba(216,166,89,0.06), transparent 50%),
+      radial-gradient(circle at 12% 8%, rgba(142,201,224,0.25), transparent 45%),
+      radial-gradient(circle at 88% 15%, rgba(245,184,120,0.22), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(240,166,160,0.18), transparent 50%),
       var(--bg);
-    color:var(--bone);
-    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    font-family:'Nunito', sans-serif;
     min-height:100%;
     display:flex;
   }
-  ::selection{ background: var(--xray-dim); color:#fff; }
+  ::selection{ background: var(--blue); color:#fff; }
 
-  /* ---------- SPINE PROGRESS (signature element) ---------- */
+  /* ---------- SPINE PROGRESS (signature element, ahora como collar de huesitos) ---------- */
   .spine-rail{
-    width:76px;
+    width:84px;
     flex-shrink:0;
     display:flex;
     flex-direction:column;
     align-items:center;
     padding:28px 0;
-    gap:6px;
-    border-right:1px solid var(--line);
-    background:linear-gradient(180deg, var(--panel), var(--bg));
+    gap:10px;
+    background:linear-gradient(180deg, #ffffff, #fff2e2);
+    border-right:3px dashed var(--line);
   }
   .spine-label{
     writing-mode:vertical-rl;
     text-orientation:mixed;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:12px;
     letter-spacing:2px;
-    color:var(--bone-dim);
-    margin-bottom:14px;
+    color:var(--ink-dim);
+    margin-bottom:10px;
   }
   .vertebra{
-    width:34px;
-    height:20px;
-    border-radius:9px;
+    width:38px;
+    height:26px;
+    border-radius:14px;
     background:var(--panel-2);
-    border:1px solid var(--line);
+    border:2px solid var(--line);
     position:relative;
     transition:all .5s ease;
+    box-shadow:0 3px 0 var(--line);
   }
   .vertebra::after{
-    content:'';
+    content:'🦴';
     position:absolute;
     inset:0;
-    margin:auto;
-    width:6px;height:6px;
-    border-radius:50%;
-    background:var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    filter:grayscale(1) opacity(0.35);
     transition:all .5s ease;
   }
   .vertebra.lit{
-    background:linear-gradient(180deg, rgba(111,209,255,0.18), rgba(111,209,255,0.04));
-    border-color:var(--xray);
-    box-shadow:0 0 14px rgba(111,209,255,0.35);
+    background:linear-gradient(180deg, #d7f0da, #c3e8c9);
+    border-color:var(--good);
+    box-shadow:0 3px 0 #6fae7f;
   }
-  .vertebra.lit::after{ background:var(--xray); box-shadow:0 0 8px var(--xray); }
+  .vertebra.lit::after{ filter:none; }
   .vertebra.current{
-    border-color:var(--amber);
-    box-shadow:0 0 14px rgba(216,166,89,0.4);
+    border-color:var(--peach);
+    box-shadow:0 3px 0 #d99a54;
+    transform:scale(1.08);
   }
-  .vertebra.current::after{ background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .vertebra.current::after{ filter:grayscale(0.2) opacity(0.9); }
 
   /* ---------- MAIN AREA ---------- */
   main{
@@ -101,88 +107,97 @@
     justify-content:space-between;
     align-items:flex-start;
     margin-bottom:28px;
-    border-bottom:1px solid var(--line);
+    border-bottom:3px dashed var(--line);
     padding-bottom:18px;
   }
   .brand{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:3px;
-    color:var(--xray);
-    text-transform:uppercase;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:1px;
+    color:var(--peach);
   }
   .brand-sub{
-    font-size:11px;
-    color:var(--bone-dim);
+    font-size:12px;
+    color:var(--ink-dim);
     margin-top:4px;
-    font-family:'IBM Plex Mono', monospace;
+    font-family:'Nunito', sans-serif;
+    font-weight:600;
   }
   .timer{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:28px;
-    color:var(--amber);
-    text-shadow:0 0 12px rgba(216,166,89,0.5);
-    letter-spacing:2px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:30px;
+    color:var(--blue);
+    letter-spacing:1px;
   }
-  .timer.low{ color:var(--danger); text-shadow:0 0 12px rgba(217,105,95,0.6); }
+  .timer.low{ color:var(--danger); }
 
   h1.room-title{
-    font-family:'Fraunces', serif;
-    font-weight:700;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
     font-size:clamp(28px, 4vw, 40px);
     margin:0 0 6px;
     line-height:1.1;
+    color:var(--ink);
   }
   .room-eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:var(--xray);
-    letter-spacing:2px;
-    text-transform:uppercase;
-    margin-bottom:10px;
+    display:inline-block;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:#fff;
+    background:var(--peach);
+    padding:4px 12px;
+    border-radius:20px;
+    margin-bottom:12px;
   }
   .briefing{
-    color:var(--bone-dim);
+    color:var(--ink-dim);
     font-size:15px;
     line-height:1.6;
     max-width:640px;
     margin-bottom:28px;
+    font-weight:600;
   }
 
   .challenge-card{
     background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:10px;
+    border:2px solid var(--line);
+    border-radius:18px;
     padding:22px 24px;
     margin-bottom:16px;
+    box-shadow:0 4px 0 var(--line);
   }
-  .q-text{ font-size:15px; margin-bottom:12px; font-weight:500; }
-  .q-text b{ color:var(--xray); font-weight:600; }
+  .q-text{ font-size:15px; margin-bottom:12px; font-weight:700; }
+  .q-text b{ color:var(--peach); font-weight:800; }
   .options{ display:flex; flex-wrap:wrap; gap:8px; }
   .opt-btn{
     background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--bone);
-    padding:9px 14px;
-    border-radius:7px;
-    font-family:'Inter',sans-serif;
+    border:2px solid var(--line);
+    color:var(--ink);
+    padding:9px 16px;
+    border-radius:20px;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
     font-size:14px;
     cursor:pointer;
     transition:all .15s ease;
   }
-  .opt-btn:hover{ border-color:var(--xray); }
-  .opt-btn.selected{ border-color:var(--xray); background:rgba(111,209,255,0.1); }
-  .opt-btn.correct{ border-color:var(--good); background:rgba(127,201,154,0.12); color:var(--good); }
-  .opt-btn.incorrect{ border-color:var(--danger); background:rgba(217,105,95,0.12); color:var(--danger); }
+  .opt-btn:hover{ border-color:var(--blue); transform:translateY(-1px); }
+  .opt-btn.selected{ border-color:var(--blue); background:var(--blue-dim); color:#3a7a94; }
+  .opt-btn.correct{ border-color:var(--good); background:#e3f5e6; color:#4a8a5c; }
+  .opt-btn.incorrect{ border-color:var(--danger); background:#fbe7e5; color:#c85f56; }
   .opt-btn:disabled{ cursor:default; }
 
   select.match-select{
     background:var(--panel-2);
-    border:1px solid var(--line);
-    color:var(--bone);
-    padding:8px 10px;
-    border-radius:7px;
-    font-family:'Inter',sans-serif;
+    border:2px solid var(--line);
+    color:var(--ink);
+    padding:8px 12px;
+    border-radius:14px;
+    font-family:'Nunito',sans-serif;
+    font-weight:700;
     font-size:14px;
   }
   select.match-select.correct{ border-color:var(--good); }
@@ -191,73 +206,79 @@
   .order-list{ display:flex; flex-direction:column; gap:8px; }
   .order-item{
     background:var(--panel-2);
-    border:1px solid var(--line);
-    border-radius:7px;
+    border:2px solid var(--line);
+    border-radius:14px;
     padding:12px 14px;
     display:flex;
     align-items:center;
     gap:12px;
     cursor:grab;
     font-size:14px;
+    font-weight:700;
+    box-shadow:0 3px 0 var(--line);
   }
-  .order-item .handle{ color:var(--bone-dim); font-family:'IBM Plex Mono',monospace; font-size:12px; }
+  .order-item .handle{ color:var(--ink-dim); font-size:14px; }
   .order-item.dragging{ opacity:0.4; }
 
   .verify-row{ display:flex; gap:10px; align-items:center; margin-top:20px; flex-wrap:wrap;}
   .btn{
-    font-family:'Inter',sans-serif;
-    font-weight:600;
-    font-size:14px;
-    padding:11px 20px;
-    border-radius:7px;
-    border:1px solid var(--xray);
-    background:transparent;
-    color:var(--xray);
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:12px 22px;
+    border-radius:20px;
+    border:2px solid var(--blue);
+    background:var(--blue);
+    color:#fff;
     cursor:pointer;
-    transition:all .15s ease;
+    box-shadow:0 4px 0 #6ba9c2;
+    transition:all .1s ease;
   }
-  .btn:hover{ background:rgba(111,209,255,0.1); }
-  .btn:disabled{ opacity:0.35; cursor:not-allowed; }
-  .feedback{ font-size:13px; font-family:'IBM Plex Mono',monospace; }
-  .feedback.good{ color:var(--good); }
-  .feedback.bad{ color:var(--danger); }
+  .btn:hover{ transform:translateY(1px); box-shadow:0 3px 0 #6ba9c2; }
+  .btn:disabled{ opacity:0.35; cursor:not-allowed; box-shadow:none; }
+  .feedback{ font-size:13px; font-family:'Nunito',sans-serif; font-weight:700; }
+  .feedback.good{ color:#4a8a5c; }
+  .feedback.bad{ color:#c85f56; }
 
   .lock-panel{
     margin-top:24px;
-    background:linear-gradient(180deg, var(--panel-2), var(--panel));
-    border:1px solid var(--amber);
-    border-radius:10px;
+    background:#fff8ec;
+    border:2px solid var(--peach);
+    border-radius:18px;
     padding:22px 24px;
-    box-shadow:0 0 30px rgba(216,166,89,0.06) inset;
   }
-  .lock-panel.disabled{ opacity:0.4; pointer-events:none; }
+  .lock-panel.disabled{ opacity:0.45; pointer-events:none; }
   .lock-label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:2px;
-    color:var(--amber);
-    text-transform:uppercase;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:#fff;
+    background:var(--peach);
+    display:inline-block;
+    padding:3px 12px;
+    border-radius:20px;
     margin-bottom:10px;
   }
-  .lock-hint{ font-size:13px; color:var(--bone-dim); margin-bottom:14px; line-height:1.5; }
+  .lock-hint{ font-size:13px; color:var(--ink-dim); margin-bottom:14px; line-height:1.5; font-weight:600; }
   .lock-row{ display:flex; gap:10px; }
   .lock-input{
     flex:1;
-    background:var(--bg);
-    border:1px solid var(--line);
-    color:var(--amber);
-    font-family:'IBM Plex Mono',monospace;
+    background:#ffffff;
+    border:2px solid var(--line);
+    color:var(--peach);
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
     font-size:18px;
     letter-spacing:4px;
     padding:10px 14px;
-    border-radius:7px;
+    border-radius:14px;
     text-transform:uppercase;
   }
-  .lock-input:focus{ outline:none; border-color:var(--amber); }
+  .lock-input:focus{ outline:none; border-color:var(--peach); }
   .btn-amber{
-    border-color:var(--amber); color:var(--amber);
+    border-color:var(--peach); background:var(--peach); box-shadow:0 4px 0 #d99a54;
   }
-  .btn-amber:hover{ background:rgba(216,166,89,0.12); }
+  .btn-amber:hover{ box-shadow:0 3px 0 #d99a54; }
 
   .intro-screen, .end-screen{
     display:flex;
@@ -267,26 +288,27 @@
     max-width:600px;
   }
   .intro-screen h1, .end-screen h1{
-    font-family:'Fraunces',serif;
-    font-weight:700;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:800;
     font-size:clamp(32px,5vw,52px);
     line-height:1.05;
     margin:0 0 18px;
+    color:var(--ink);
   }
-  .intro-screen p, .end-screen p{ color:var(--bone-dim); font-size:15px; line-height:1.7; margin-bottom:26px;}
+  .intro-screen p, .end-screen p{ color:var(--ink-dim); font-size:15px; line-height:1.7; margin-bottom:26px; font-weight:600;}
   .final-code-display{
-    font-family:'IBM Plex Mono',monospace;
+    font-family:'Baloo 2',sans-serif;
     font-size:15px;
-    color:var(--xray);
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:8px;
+    color:#3a7a94;
+    background:var(--blue-dim);
+    border:2px solid var(--blue);
+    border-radius:14px;
     padding:14px 18px;
     margin-bottom:22px;
   }
 
   @media (max-width:640px){
-    .spine-rail{ width:44px; }
+    .spine-rail{ width:50px; }
     .spine-label{ display:none; }
     main{ padding:24px 18px 40px; }
   }
@@ -376,6 +398,26 @@ let currentRoom = -1; // -1 = intro
 let timeLeft = 25 * 60;
 let timerInterval = null;
 let roomState = {}; // per-room interaction state
+const MAX_LIVES = 3;
+let lives = MAX_LIVES;
+
+function renderLives(){
+  const el = document.getElementById('livesDisplay');
+  if(!el) return;
+  el.innerHTML = Array.from({length: MAX_LIVES}, (_, i) =>
+    `<span style="opacity:${i < lives ? 1 : 0.25}; filter:${i < lives ? 'none' : 'grayscale(1)'};">🦴</span>`
+  ).join(' ');
+}
+
+function loseLife(){
+  if(lives <= 0) return;
+  lives--;
+  renderLives();
+  if(lives <= 0){
+    clearInterval(timerInterval);
+    setTimeout(() => goToRoom(-2), 900); // -2 = game over
+  }
+}
 
 function startTimer(){
   timerInterval = setInterval(() => {
@@ -416,9 +458,23 @@ function goToRoom(idx){
 
 function render(){
   const app = document.getElementById('app');
+  if(currentRoom === -2){ renderGameOver(app); return; }
   if(currentRoom === -1){ renderIntro(app); return; }
   if(currentRoom >= ROOMS.length){ renderEnd(app); return; }
   renderRoom(app, ROOMS[currentRoom]);
+}
+
+function renderGameOver(app){
+  clearInterval(timerInterval);
+  app.innerHTML = `
+    <div class="end-screen">
+      <div class="room-eyebrow" style="background:var(--danger);">Game Over</div>
+      <h1>Te quedaste sin vidas 🦴💔</h1>
+      <p>Fallaste 3 veces y la alarma nocturna se activó antes de que pudieras salir. No te preocupes, puedes volver a intentarlo desde el inicio.</p>
+      <div>
+        <button class="btn" onclick="location.reload()">Intentar de nuevo</button>
+      </div>
+    </div>`;
 }
 
 function renderIntro(app){
@@ -459,7 +515,10 @@ function renderRoom(app, room){
         <div class="brand">SISTEMA ÓSEO // PROTOCOLO DE SALIDA</div>
         <div class="brand-sub">Sala ${room.id} de ${ROOMS.length}</div>
       </div>
-      <div class="timer" id="timerDisplay"></div>
+      <div style="text-align:right;">
+        <div class="timer" id="timerDisplay"></div>
+        <div id="livesDisplay" style="font-size:20px; margin-top:4px;"></div>
+      </div>
     </header>
     <div class="room-eyebrow">${room.eyebrow}</div>
     <h1 class="room-title">${room.title}</h1>
@@ -476,6 +535,7 @@ function renderRoom(app, room){
     </div>
   `;
   renderTimer();
+  renderLives();
   renderChallenge(room);
 }
 
@@ -577,9 +637,10 @@ function verifyMcqSet(roomId){
     fb.className = 'feedback good';
     unlockLockPanel(room);
   } else {
-    fb.textContent = `${correct}/${room.questions.length} correctas. Revisa las marcadas en rojo e inténtalo de nuevo.`;
+    fb.textContent = `${correct}/${room.questions.length} correctas. Perdiste una vida 🦴. Revisa las marcadas en rojo e inténtalo de nuevo.`;
     fb.className = 'feedback bad';
-    setTimeout(() => { mcqSelections = {}; renderChallenge(room); }, 1800);
+    loseLife();
+    setTimeout(() => { mcqSelections = {}; if(lives > 0) renderChallenge(room); }, 1800);
   }
 }
 
@@ -611,9 +672,10 @@ function verifyToggle(roomId){
     fb.className = 'feedback good';
     unlockLockPanel(room);
   } else {
-    fb.textContent = `${correct}/${room.items.length} correctas. Inténtalo de nuevo.`;
+    fb.textContent = `${correct}/${room.items.length} correctas. Perdiste una vida 🦴. Inténtalo de nuevo.`;
     fb.className = 'feedback bad';
-    setTimeout(() => { toggleSelections = {}; renderChallenge(room); }, 1800);
+    loseLife();
+    setTimeout(() => { toggleSelections = {}; if(lives > 0) renderChallenge(room); }, 1800);
   }
 }
 
@@ -654,8 +716,9 @@ function verifyOrder(roomId){
     list.querySelectorAll('.order-item').forEach(el => el.setAttribute('draggable', 'false'));
     unlockLockPanel(room);
   } else {
-    fb.textContent = 'El orden aún no es correcto. Ajusta y vuelve a verificar.';
+    fb.textContent = 'El orden aún no es correcto. Perdiste una vida 🦴. Ajusta y vuelve a verificar.';
     fb.className = 'feedback bad';
+    loseLife();
   }
 }
 
@@ -675,8 +738,9 @@ function verifyMatch(roomId){
     fb.className = 'feedback good';
     unlockLockPanel(room);
   } else {
-    fb.textContent = `${correct}/${room.items.length} correctas. Ajusta las marcadas en rojo.`;
+    fb.textContent = `${correct}/${room.items.length} correctas. Perdiste una vida 🦴. Ajusta las marcadas en rojo.`;
     fb.className = 'feedback bad';
+    loseLife();
   }
 }
 
@@ -698,8 +762,9 @@ function tryUnlock(roomId){
     fb.className = 'feedback good';
     setTimeout(() => goToRoom(currentRoom + 1), 1000);
   } else {
-    fb.textContent = '✗ Código incorrecto. Revisa la pista.';
+    fb.textContent = '✗ Código incorrecto. Perdiste una vida 🦴. Revisa la pista.';
     fb.className = 'feedback bad';
+    loseLife();
   }
 }
 
