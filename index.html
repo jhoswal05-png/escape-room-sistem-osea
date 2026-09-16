@@ -3,783 +3,332 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Laboratorio de Osteología · Escape Room</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Flashcards de Heterociclos</title>
 <style>
   :root{
-    --bg: #fdf6ec;
-    --panel: #ffffff;
-    --panel-2: #fff2e2;
-    --line: #f0dfc7;
-    --ink: #5c4b3a;
-    --ink-dim: #a3907c;
-    --blue: #8ec9e0;
-    --blue-dim: #eaf5fa;
-    --pink: #f0a6a0;
-    --peach: #f5b878;
-    --danger: #ef8b83;
-    --good: #8fc9a0;
+    --bg:#f4f6f8; --card-bg:#ffffff; --accent:#0d9488; --accent2:#f97316;
+    --text:#1f2937; --muted:#6b7280; --border:#e5e7eb;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#111827; --card-bg:#1f2937; --text:#f3f4f6; --muted:#9ca3af; --border:#374151;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#111827; --card-bg:#1f2937; --text:#f3f4f6; --muted:#9ca3af; --border:#374151;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;height:100%;}
   body{
-    background:
-      radial-gradient(circle at 12% 8%, rgba(142,201,224,0.25), transparent 45%),
-      radial-gradient(circle at 88% 15%, rgba(245,184,120,0.22), transparent 45%),
-      radial-gradient(circle at 50% 100%, rgba(240,166,160,0.18), transparent 50%),
-      var(--bg);
-    color:var(--ink);
-    font-family:'Nunito', sans-serif;
-    min-height:100%;
-    display:flex;
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text); min-height:100vh; padding:16px;
   }
-  ::selection{ background: var(--blue); color:#fff; }
+  .wrap{max-width:520px; margin:0 auto;}
+  h1{font-size:1.3rem; text-align:center; margin:6px 0 2px;}
+  .subtitle{text-align:center; color:var(--muted); font-size:0.85rem; margin-bottom:14px;}
 
-  /* ---------- SPINE PROGRESS (signature element, ahora como collar de huesitos) ---------- */
-  .spine-rail{
-    width:84px;
-    flex-shrink:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:28px 0;
-    gap:10px;
-    background:linear-gradient(180deg, #ffffff, #fff2e2);
-    border-right:3px dashed var(--line);
+  .topbar{display:flex; gap:8px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;}
+  .mode-btn{
+    border:1px solid var(--border); background:var(--card-bg); color:var(--text);
+    padding:7px 12px; border-radius:20px; font-size:0.8rem; cursor:pointer;
   }
-  .spine-label{
-    writing-mode:vertical-rl;
-    text-orientation:mixed;
-    font-family:'Baloo 2', sans-serif;
-    font-weight:700;
-    font-size:12px;
-    letter-spacing:2px;
-    color:var(--ink-dim);
-    margin-bottom:10px;
-  }
-  .vertebra{
-    width:38px;
-    height:26px;
-    border-radius:14px;
-    background:var(--panel-2);
-    border:2px solid var(--line);
-    position:relative;
-    transition:all .5s ease;
-    box-shadow:0 3px 0 var(--line);
-  }
-  .vertebra::after{
-    content:'🦴';
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    filter:grayscale(1) opacity(0.35);
-    transition:all .5s ease;
-  }
-  .vertebra.lit{
-    background:linear-gradient(180deg, #d7f0da, #c3e8c9);
-    border-color:var(--good);
-    box-shadow:0 3px 0 #6fae7f;
-  }
-  .vertebra.lit::after{ filter:none; }
-  .vertebra.current{
-    border-color:var(--peach);
-    box-shadow:0 3px 0 #d99a54;
-    transform:scale(1.08);
-  }
-  .vertebra.current::after{ filter:grayscale(0.2) opacity(0.9); }
+  .mode-btn.active{background:var(--accent); color:white; border-color:var(--accent);}
 
-  /* ---------- MAIN AREA ---------- */
-  main{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    max-width:920px;
-    margin:0 auto;
-    padding:36px 40px 60px;
-    width:100%;
-  }
-  header.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    margin-bottom:28px;
-    border-bottom:3px dashed var(--line);
-    padding-bottom:18px;
-  }
-  .brand{
-    font-family:'Baloo 2', sans-serif;
-    font-weight:700;
-    font-size:13px;
-    letter-spacing:1px;
-    color:var(--peach);
-  }
-  .brand-sub{
-    font-size:12px;
-    color:var(--ink-dim);
-    margin-top:4px;
-    font-family:'Nunito', sans-serif;
-    font-weight:600;
-  }
-  .timer{
-    font-family:'Baloo 2', sans-serif;
-    font-weight:700;
-    font-size:30px;
-    color:var(--blue);
-    letter-spacing:1px;
-  }
-  .timer.low{ color:var(--danger); }
+  .stats{display:flex; justify-content:space-between; align-items:center; font-size:0.8rem; color:var(--muted); margin-bottom:8px; padding:0 4px;}
+  .progress-bar{height:6px; background:var(--border); border-radius:3px; overflow:hidden; margin-bottom:16px;}
+  .progress-fill{height:100%; background:var(--accent); width:0%; transition:width .3s;}
 
-  h1.room-title{
-    font-family:'Baloo 2', sans-serif;
-    font-weight:800;
-    font-size:clamp(28px, 4vw, 40px);
-    margin:0 0 6px;
-    line-height:1.1;
-    color:var(--ink);
+  .card-scene{perspective:1400px; height:380px; margin-bottom:16px;}
+  .card{
+    position:relative; width:100%; height:100%; cursor:pointer;
+    transform-style:preserve-3d; transition:transform .5s;
   }
-  .room-eyebrow{
-    display:inline-block;
-    font-family:'Baloo 2', sans-serif;
-    font-weight:700;
-    font-size:13px;
-    color:#fff;
-    background:var(--peach);
-    padding:4px 12px;
-    border-radius:20px;
-    margin-bottom:12px;
+  .card.flipped{transform:rotateY(180deg);}
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    background:var(--card-bg); border:1px solid var(--border); border-radius:16px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:18px; box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    text-align:center;
   }
-  .briefing{
-    color:var(--ink-dim);
-    font-size:15px;
-    line-height:1.6;
-    max-width:640px;
-    margin-bottom:28px;
-    font-weight:600;
+  .face.back{transform:rotateY(180deg);}
+  .tag{
+    position:absolute; top:12px; left:12px; font-size:0.65rem; font-weight:700;
+    color:white; background:var(--accent2); padding:3px 9px; border-radius:10px; letter-spacing:.03em;
   }
+  .tag.reverse{background:var(--accent);}
+  .name-display{font-size:1.7rem; font-weight:800; color:var(--text);}
+  .name-sub{color:var(--muted); font-size:0.85rem; margin-top:6px;}
+  .struct-display svg{width:180px; height:180px;}
+  .hint{position:absolute; bottom:12px; font-size:0.7rem; color:var(--muted);}
 
-  .challenge-card{
-    background:var(--panel);
-    border:2px solid var(--line);
-    border-radius:18px;
-    padding:22px 24px;
-    margin-bottom:16px;
-    box-shadow:0 4px 0 var(--line);
-  }
-  .q-text{ font-size:15px; margin-bottom:12px; font-weight:700; }
-  .q-text b{ color:var(--peach); font-weight:800; }
-  .options{ display:flex; flex-wrap:wrap; gap:8px; }
-  .opt-btn{
-    background:var(--panel-2);
-    border:2px solid var(--line);
-    color:var(--ink);
-    padding:9px 16px;
-    border-radius:20px;
-    font-family:'Nunito',sans-serif;
-    font-weight:700;
-    font-size:14px;
-    cursor:pointer;
-    transition:all .15s ease;
-  }
-  .opt-btn:hover{ border-color:var(--blue); transform:translateY(-1px); }
-  .opt-btn.selected{ border-color:var(--blue); background:var(--blue-dim); color:#3a7a94; }
-  .opt-btn.correct{ border-color:var(--good); background:#e3f5e6; color:#4a8a5c; }
-  .opt-btn.incorrect{ border-color:var(--danger); background:#fbe7e5; color:#c85f56; }
-  .opt-btn:disabled{ cursor:default; }
-
-  select.match-select{
-    background:var(--panel-2);
-    border:2px solid var(--line);
-    color:var(--ink);
-    padding:8px 12px;
-    border-radius:14px;
-    font-family:'Nunito',sans-serif;
-    font-weight:700;
-    font-size:14px;
-  }
-  select.match-select.correct{ border-color:var(--good); }
-  select.match-select.incorrect{ border-color:var(--danger); }
-
-  .order-list{ display:flex; flex-direction:column; gap:8px; }
-  .order-item{
-    background:var(--panel-2);
-    border:2px solid var(--line);
-    border-radius:14px;
-    padding:12px 14px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    cursor:grab;
-    font-size:14px;
-    font-weight:700;
-    box-shadow:0 3px 0 var(--line);
-  }
-  .order-item .handle{ color:var(--ink-dim); font-size:14px; }
-  .order-item.dragging{ opacity:0.4; }
-
-  .verify-row{ display:flex; gap:10px; align-items:center; margin-top:20px; flex-wrap:wrap;}
+  .controls{display:flex; gap:10px; justify-content:center; margin-bottom:10px;}
   .btn{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:700;
-    font-size:15px;
-    padding:12px 22px;
-    border-radius:20px;
-    border:2px solid var(--blue);
-    background:var(--blue);
-    color:#fff;
-    cursor:pointer;
-    box-shadow:0 4px 0 #6ba9c2;
-    transition:all .1s ease;
+    flex:1; max-width:160px; padding:12px; border-radius:12px; border:none;
+    font-size:0.95rem; font-weight:600; cursor:pointer;
   }
-  .btn:hover{ transform:translateY(1px); box-shadow:0 3px 0 #6ba9c2; }
-  .btn:disabled{ opacity:0.35; cursor:not-allowed; box-shadow:none; }
-  .feedback{ font-size:13px; font-family:'Nunito',sans-serif; font-weight:700; }
-  .feedback.good{ color:#4a8a5c; }
-  .feedback.bad{ color:#c85f56; }
-
-  .lock-panel{
-    margin-top:24px;
-    background:#fff8ec;
-    border:2px solid var(--peach);
-    border-radius:18px;
-    padding:22px 24px;
+  .btn-primary{background:var(--accent); color:white;}
+  .btn-secondary{background:transparent; color:var(--text); border:1px solid var(--border);}
+  .nav{display:flex; gap:10px; justify-content:center; margin-top:6px;}
+  .nav button{
+    background:var(--card-bg); border:1px solid var(--border); color:var(--text);
+    padding:10px 18px; border-radius:10px; font-size:0.85rem; cursor:pointer;
   }
-  .lock-panel.disabled{ opacity:0.45; pointer-events:none; }
-  .lock-label{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:700;
-    font-size:13px;
-    color:#fff;
-    background:var(--peach);
-    display:inline-block;
-    padding:3px 12px;
-    border-radius:20px;
-    margin-bottom:10px;
-  }
-  .lock-hint{ font-size:13px; color:var(--ink-dim); margin-bottom:14px; line-height:1.5; font-weight:600; }
-  .lock-row{ display:flex; gap:10px; }
-  .lock-input{
-    flex:1;
-    background:#ffffff;
-    border:2px solid var(--line);
-    color:var(--peach);
-    font-family:'Baloo 2',sans-serif;
-    font-weight:700;
-    font-size:18px;
-    letter-spacing:4px;
-    padding:10px 14px;
-    border-radius:14px;
-    text-transform:uppercase;
-  }
-  .lock-input:focus{ outline:none; border-color:var(--peach); }
-  .btn-amber{
-    border-color:var(--peach); background:var(--peach); box-shadow:0 4px 0 #d99a54;
-  }
-  .btn-amber:hover{ box-shadow:0 3px 0 #d99a54; }
-
-  .intro-screen, .end-screen{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    min-height:70vh;
-    max-width:600px;
-  }
-  .intro-screen h1, .end-screen h1{
-    font-family:'Baloo 2',sans-serif;
-    font-weight:800;
-    font-size:clamp(32px,5vw,52px);
-    line-height:1.05;
-    margin:0 0 18px;
-    color:var(--ink);
-  }
-  .intro-screen p, .end-screen p{ color:var(--ink-dim); font-size:15px; line-height:1.7; margin-bottom:26px; font-weight:600;}
-  .final-code-display{
-    font-family:'Baloo 2',sans-serif;
-    font-size:15px;
-    color:#3a7a94;
-    background:var(--blue-dim);
-    border:2px solid var(--blue);
-    border-radius:14px;
-    padding:14px 18px;
-    margin-bottom:22px;
-  }
-
-  @media (max-width:640px){
-    .spine-rail{ width:50px; }
-    .spine-label{ display:none; }
-    main{ padding:24px 18px 40px; }
-  }
+  .nav button:disabled{opacity:0.4; cursor:default;}
+  .finish{text-align:center; padding:30px 10px;}
+  .finish h2{margin-bottom:4px;}
+  footer{text-align:center; color:var(--muted); font-size:0.7rem; margin-top:18px;}
 </style>
 </head>
 <body>
+<div class="wrap">
+  <h1>🧪 Flashcards de Heterociclos</h1>
+  <div class="subtitle">Nomenclatura común o trivial — 24 estructuras · 48 tarjetas</div>
 
-<div class="spine-rail" id="spineRail">
-  <div class="spine-label">PROGRESO</div>
+  <div class="topbar">
+    <button class="mode-btn active" data-mode="all">Todas (48)</button>
+    <button class="mode-btn" data-mode="n2s">Nombre → Estructura</button>
+    <button class="mode-btn" data-mode="s2n">Estructura → Nombre</button>
+  </div>
+
+  <div class="stats">
+    <span id="counter">Tarjeta 1 / 48</span>
+    <span id="scoreDisplay">✔ 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div id="deckArea">
+    <div class="card-scene">
+      <div class="card" id="card">
+        <div class="face front" id="faceFront"></div>
+        <div class="face back" id="faceBack"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" id="dontKnowBtn">No la sabía</button>
+      <button class="btn btn-primary" id="knowBtn">¡La sabía!</button>
+    </div>
+    <div class="nav">
+      <button id="prevBtn">‹ Anterior</button>
+      <button id="shuffleBtn">🔀 Barajar</button>
+      <button id="nextBtn">Siguiente ›</button>
+    </div>
+  </div>
+
+  <div id="finishArea" style="display:none;" class="finish">
+    <h2>🎉 ¡Terminaste el mazo!</h2>
+    <p id="finalScore" style="color:var(--muted);"></p>
+    <button class="btn btn-primary" id="restartBtn" style="margin-top:10px;">Reiniciar mazo</button>
+  </div>
+
+  <footer>Toca la tarjeta para voltearla</footer>
 </div>
 
-<main id="app"></main>
-
 <script>
-const ROOMS = [
-  {
-    id: 1,
-    title: "Clasificación de los huesos",
-    eyebrow: "Sala 01 · Candado 1",
-    briefing: "Cada hueso del cuerpo se clasifica según su forma. Identifica correctamente la clasificación de cada hueso listado. Al acertar los cinco, obtendrás una letra por cada uno — ordénalas para formar el código.",
-    type: "mcq-set",
-    questions: [
-      { q: "Fémur", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Largo", letter: "L" },
-      { q: "Rótula (patela)", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Sesamoideo", letter: "S" },
-      { q: "Vértebra", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Irregular", letter: "I" },
-      { q: "Esternón", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Plano", letter: "P" },
-      { q: "Escafoides (hueso del carpo)", options: ["Largo","Corto","Plano","Irregular","Sesamoideo"], answer: "Corto", letter: "C" }
-    ],
-    code: "CLIPS",
-    hint: "Las letras obtenidas son: L, S, I, P, C. Ordénalas para formar una palabra de 5 letras."
-  },
-  {
-    id: 2,
-    title: "Esqueleto axial y apendicular",
-    eyebrow: "Sala 02 · Candado 2",
-    briefing: "El esqueleto humano se divide en axial (eje central del cuerpo) y apendicular (extremidades y cinturas). Clasifica correctamente cada hueso.",
-    type: "toggle-classify",
-    items: [
-      { name: "Cráneo", answer: "Axial" },
-      { name: "Costillas", answer: "Axial" },
-      { name: "Columna vertebral", answer: "Axial" },
-      { name: "Clavícula", answer: "Apendicular" },
-      { name: "Húmero", answer: "Apendicular" },
-      { name: "Coxal (cadera)", answer: "Apendicular" },
-      { name: "Fémur", answer: "Apendicular" },
-      { name: "Esternón", answer: "Axial" }
-    ],
-    code: "206",
-    hint: "El código es el número total de huesos en el esqueleto de un adulto."
-  },
-  {
-    id: 3,
-    title: "Funciones del sistema óseo",
-    eyebrow: "Sala 03 · Candado 3",
-    briefing: "El sistema óseo cumple varias funciones vitales más allá de sostener el cuerpo. Responde correctamente cada pregunta.",
-    type: "mcq-set",
-    questions: [
-      { q: "¿Qué función ósea se relaciona con la producción de células sanguíneas?", options: ["Protección","Hematopoyesis","Sostén","Palanca"], answer: "Hematopoyesis" },
-      { q: "¿Qué función permite el movimiento junto con los músculos?", options: ["Mecánica (palanca)","Metabólica","Hematopoyética","Sostén"], answer: "Mecánica (palanca)" },
-      { q: "¿Qué minerales almacenan principalmente los huesos?", options: ["Hierro y zinc","Calcio y fósforo","Sodio y potasio","Magnesio y yodo"], answer: "Calcio y fósforo" },
-      { q: "¿Qué función cumplen el cráneo y la caja torácica?", options: ["Protección de órganos","Hematopoyesis","Palanca","Almacenamiento de grasa"], answer: "Protección de órganos" },
-      { q: "¿Qué función le da al cuerpo su forma general?", options: ["Sostén / soporte","Metabólica","Hematopoyesis","Protección"], answer: "Sostén / soporte" }
-    ],
-    code: "54321",
-    hint: "Contaste 5 funciones correctamente. El código es la cuenta regresiva desde ese número: 5-4-3-2-1."
-  },
-  {
-    id: 4,
-    title: "Regiones anatómicas longitudinales",
-    eyebrow: "Sala 04 · Candado 4",
-    briefing: "Todo hueso largo se divide en regiones a lo largo de su eje. Ordénalas desde el extremo proximal (arriba) hasta el distal (abajo), tal como aparecen en un fémur.",
-    type: "order",
-    items: [
-      { id: "epi-prox", label: "Epífisis proximal" },
-      { id: "meta-prox", label: "Metáfisis proximal" },
-      { id: "dia", label: "Diáfisis" },
-      { id: "meta-dist", label: "Metáfisis distal" },
-      { id: "epi-dist", label: "Epífisis distal" }
-    ],
-    correctOrder: ["epi-prox","meta-prox","dia","meta-dist","epi-dist"],
-    code: "DIAFISIS",
-    hint: "La región central que ordenaste en la posición 3 es también el código de este candado."
+/* ---------- Generador de estructuras SVG ---------- */
+function pt(cx,cy,r,angleDeg){
+  const a=angleDeg*Math.PI/180;
+  return [cx+r*Math.cos(a), cy-r*Math.sin(a)];
+}
+function ringSVG(n, atoms, doubles){
+  const cx=70, cy=68, r= n===3?36:44;
+  const startAngle=-90;
+  const step=360/n;
+  let verts=[];
+  for(let i=0;i<n;i++){ verts.push(pt(cx,cy,r,startAngle-i*step)); }
+  let bonds='';
+  for(let i=0;i<n;i++){
+    const [x1,y1]=verts[i];
+    const [x2,y2]=verts[(i+1)%n];
+    bonds+=`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#333" stroke-width="2.6" stroke-linecap="round"/>`;
+    if(doubles.includes(i)){
+      const mx=(x1+x2)/2, my=(y1+y2)/2;
+      const dx=cx-mx, dy=cy-my; const dist=Math.hypot(dx,dy)||1;
+      const ux=dx/dist, uy=dy/dist;
+      const offset=6.5, shrink=0.7;
+      const ix1=mx+(x1-mx)*shrink+ux*offset;
+      const iy1=my+(y1-my)*shrink+uy*offset;
+      const ix2=mx+(x2-mx)*shrink+ux*offset;
+      const iy2=my+(y2-my)*shrink+uy*offset;
+      bonds+=`<line x1="${ix1.toFixed(1)}" y1="${iy1.toFixed(1)}" x2="${ix2.toFixed(1)}" y2="${iy2.toFixed(1)}" stroke="#333" stroke-width="2.6" stroke-linecap="round"/>`;
+    }
   }
+  let labels='';
+  atoms.forEach((atom,i)=>{
+    if(!atom) return;
+    const [x,y]=verts[i];
+    const color = atom.label==='N' ? '#2563eb' : atom.label==='O' ? '#dc2626' : atom.label==='S' ? '#d97706' : '#333';
+    labels+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="10.5" fill="var(--card-bg,#fff)"/>`;
+    labels+=`<text x="${x.toFixed(1)}" y="${(y+5.5).toFixed(1)}" font-size="16" font-weight="700" text-anchor="middle" fill="${color}" font-family="Arial, sans-serif">${atom.label}</text>`;
+    if(atom.h){
+      const dx=x-cx, dy=y-cy; const dist=Math.hypot(dx,dy)||1;
+      const hx=x+dx/dist*15, hy=y+dy/dist*15+4;
+      labels+=`<text x="${hx.toFixed(1)}" y="${hy.toFixed(1)}" font-size="11" fill="#333" font-family="Arial, sans-serif">H</text>`;
+    }
+  });
+  return `<svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">${bonds}${labels}</svg>`;
+}
+
+const N=(h)=>({label:'N', h:!!h});
+const O=()=>({label:'O'});
+const S=()=>({label:'S'});
+const C=null;
+
+/* ---------- Base de datos de heterociclos ---------- */
+const MOLS = [
+  {name:"Pirrol", n:5, atoms:[N(true),C,C,C,C], doubles:[1,3]},
+  {name:"Pirrolidina", n:5, atoms:[N(true),C,C,C,C], doubles:[]},
+  {name:"Furano", n:5, atoms:[O(),C,C,C,C], doubles:[1,3]},
+  {name:"THF (Tetrahidrofurano)", n:5, atoms:[O(),C,C,C,C], doubles:[]},
+  {name:"Óxido de etileno", n:3, atoms:[O(),C,C], doubles:[]},
+  {name:"Tiofeno", n:5, atoms:[S(),C,C,C,C], doubles:[1,3]},
+  {name:"4H-Tiopirano", n:6, atoms:[S(),C,C,C,C,C], doubles:[1,4]},
+  {name:"Piridina", n:6, atoms:[N(),C,C,C,C,C], doubles:[0,2,4]},
+  {name:"Piperidina", n:6, atoms:[N(true),C,C,C,C,C], doubles:[]},
+  {name:"2H-Pirano", n:6, atoms:[O(),C,C,C,C,C], doubles:[2,4]},
+  {name:"THP (Tetrahidropirano)", n:6, atoms:[O(),C,C,C,C,C], doubles:[]},
+  {name:"Pirazol", n:5, atoms:[N(true),N(),C,C,C], doubles:[1,3]},
+  {name:"Imidazol", n:5, atoms:[N(true),C,N(),C,C], doubles:[1,3]},
+  {name:"Isoxazol", n:5, atoms:[O(),N(),C,C,C], doubles:[1,3]},
+  {name:"Oxazol", n:5, atoms:[O(),C,N(),C,C], doubles:[1,3]},
+  {name:"Tiazol", n:5, atoms:[S(),C,N(),C,C], doubles:[1,3]},
+  {name:"Isotiazol", n:5, atoms:[S(),N(),C,C,C], doubles:[1,3]},
+  {name:"1,2,3-Triazol", n:5, atoms:[N(true),N(),N(),C,C], doubles:[1,3]},
+  {name:"Tetrazol", n:5, atoms:[N(true),N(),N(),N(),C], doubles:[1,3]},
+  {name:"Furazano", n:5, atoms:[O(),N(),C,C,N()], doubles:[1,3]},
+  {name:"Piridazina", n:6, atoms:[N(),N(),C,C,C,C], doubles:[0,2,4]},
+  {name:"Pirimidina", n:6, atoms:[N(),C,N(),C,C,C], doubles:[0,2,4]},
+  {name:"Pirazina", n:6, atoms:[N(),C,C,N(),C,C], doubles:[0,2,4]},
+  {name:"Morfolina", n:6, atoms:[O(),C,C,N(true),C,C], doubles:[]},
 ];
 
-let currentRoom = -1; // -1 = intro
-let timeLeft = 25 * 60;
-let timerInterval = null;
-let roomState = {}; // per-room interaction state
-const MAX_LIVES = 3;
-let lives = MAX_LIVES;
+MOLS.forEach(m=> m.svg = ringSVG(m.n, m.atoms, m.doubles));
 
-function renderLives(){
-  const el = document.getElementById('livesDisplay');
-  if(!el) return;
-  el.innerHTML = Array.from({length: MAX_LIVES}, (_, i) =>
-    `<span style="opacity:${i < lives ? 1 : 0.25}; filter:${i < lives ? 'none' : 'grayscale(1)'};">🦴</span>`
-  ).join(' ');
-}
-
-function loseLife(){
-  if(lives <= 0) return;
-  lives--;
-  renderLives();
-  if(lives <= 0){
-    clearInterval(timerInterval);
-    setTimeout(() => goToRoom(-2), 900); // -2 = game over
-  }
-}
-
-function startTimer(){
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    if(timeLeft <= 0){
-      clearInterval(timerInterval);
-      timeLeft = 0;
-    }
-    renderTimer();
-  }, 1000);
-}
-function renderTimer(){
-  const el = document.getElementById('timerDisplay');
-  if(!el) return;
-  const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
-  const s = String(timeLeft%60).padStart(2,'0');
-  el.textContent = `${m}:${s}`;
-  el.classList.toggle('low', timeLeft <= 120);
-}
-
-function renderSpine(){
-  const rail = document.getElementById('spineRail');
-  rail.querySelectorAll('.vertebra').forEach(v => v.remove());
-  ROOMS.forEach((r, i) => {
-    const v = document.createElement('div');
-    v.className = 'vertebra';
-    if(i < currentRoom) v.classList.add('lit');
-    if(i === currentRoom) v.classList.add('current');
-    rail.appendChild(v);
+/* ---------- Construcción del mazo de 48 tarjetas ---------- */
+function buildDeck(){
+  const deck=[];
+  MOLS.forEach(m=>{
+    deck.push({type:'n2s', name:m.name, svg:m.svg});
+    deck.push({type:'s2n', name:m.name, svg:m.svg});
   });
+  return deck;
 }
-
-function goToRoom(idx){
-  currentRoom = idx;
-  renderSpine();
-  render();
-}
-
-function render(){
-  const app = document.getElementById('app');
-  if(currentRoom === -2){ renderGameOver(app); return; }
-  if(currentRoom === -1){ renderIntro(app); return; }
-  if(currentRoom >= ROOMS.length){ renderEnd(app); return; }
-  renderRoom(app, ROOMS[currentRoom]);
-}
-
-function renderGameOver(app){
-  clearInterval(timerInterval);
-  app.innerHTML = `
-    <div class="end-screen">
-      <div class="room-eyebrow" style="background:var(--danger);">Game Over</div>
-      <h1>Te quedaste sin vidas 🦴💔</h1>
-      <p>Fallaste 3 veces y la alarma nocturna se activó antes de que pudieras salir. No te preocupes, puedes volver a intentarlo desde el inicio.</p>
-      <div>
-        <button class="btn" onclick="location.reload()">Intentar de nuevo</button>
-      </div>
-    </div>`;
-}
-
-function renderIntro(app){
-  app.innerHTML = `
-    <div class="intro-screen">
-      <div class="room-eyebrow">Laboratorio de Osteología · Facultad de Ciencias de la Salud</div>
-      <h1>Atrapado en el laboratorio</h1>
-      <p>Son las 23:40. Quedaste encerrado terminando un modelo de esqueleto para tu evaluación. La puerta principal tiene un sistema de 4 candados que solo se abren resolviendo retos sobre el sistema óseo. Tienes 25 minutos antes de que se active la alarma nocturna.</p>
-      <div>
-        <button class="btn" onclick="startGame()">Comenzar escape room →</button>
-      </div>
-    </div>`;
-}
-
-function startGame(){
-  goToRoom(0);
-  startTimer();
-}
-
-function renderEnd(app){
-  clearInterval(timerInterval);
-  app.innerHTML = `
-    <div class="end-screen">
-      <div class="room-eyebrow">Puerta principal</div>
-      <h1>Has escapado.</h1>
-      <p>Superaste las cuatro salas del laboratorio: clasificación ósea, esqueleto axial/apendicular, funciones del sistema óseo y regiones anatómicas longitudinales. Dominas la unidad completa.</p>
-      <div>
-        <button class="btn" onclick="location.reload()">Reiniciar</button>
-      </div>
-    </div>`;
-}
-
-function renderRoom(app, room){
-  roomState[room.id] = roomState[room.id] || { verified: {}, correctCount: 0 };
-  app.innerHTML = `
-    <header class="top">
-      <div>
-        <div class="brand">SISTEMA ÓSEO // PROTOCOLO DE SALIDA</div>
-        <div class="brand-sub">Sala ${room.id} de ${ROOMS.length}</div>
-      </div>
-      <div style="text-align:right;">
-        <div class="timer" id="timerDisplay"></div>
-        <div id="livesDisplay" style="font-size:20px; margin-top:4px;"></div>
-      </div>
-    </header>
-    <div class="room-eyebrow">${room.eyebrow}</div>
-    <h1 class="room-title">${room.title}</h1>
-    <p class="briefing">${room.briefing}</p>
-    <div id="challengeArea"></div>
-    <div class="lock-panel disabled" id="lockPanel">
-      <div class="lock-label">Panel de candado</div>
-      <div class="lock-hint" id="lockHint">Resuelve el reto para desbloquear la pista del código.</div>
-      <div class="lock-row">
-        <input class="lock-input" id="lockInput" placeholder="CÓDIGO" ${false ? '' : 'disabled'}>
-        <button class="btn btn-amber" id="lockBtn" onclick="tryUnlock(${room.id})" disabled>Desbloquear</button>
-      </div>
-      <div class="feedback" id="lockFeedback" style="margin-top:10px;"></div>
-    </div>
-  `;
-  renderTimer();
-  renderLives();
-  renderChallenge(room);
-}
-
-function renderChallenge(room){
-  const area = document.getElementById('challengeArea');
-  if(room.type === 'mcq-set'){
-    area.innerHTML = room.questions.map((q, qi) => `
-      <div class="challenge-card">
-        <div class="q-text">${qi+1}. ${q.q}</div>
-        <div class="options" id="opts-${qi}">
-          ${q.options.map(o => `<button class="opt-btn" onclick="selectMcq(${qi}, this, '${escapeStr(o)}')">${o}</button>`).join('')}
-        </div>
-      </div>
-    `).join('') + `
-      <div class="verify-row">
-        <button class="btn" onclick="verifyMcqSet(${room.id})">Verificar respuestas</button>
-        <span class="feedback" id="verifyFeedback"></span>
-      </div>`;
-  }
-  else if(room.type === 'toggle-classify'){
-    area.innerHTML = `
-      <div class="challenge-card">
-        ${room.items.map((it, i) => `
-          <div class="q-text" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
-            <span>${it.name}</span>
-            <span class="options">
-              <button class="opt-btn" id="tc-${i}-axial" onclick="selectToggle(${i}, 'Axial')">Axial</button>
-              <button class="opt-btn" id="tc-${i}-apendicular" onclick="selectToggle(${i}, 'Apendicular')">Apendicular</button>
-            </span>
-          </div>
-        `).join('')}
-      </div>
-      <div class="verify-row">
-        <button class="btn" onclick="verifyToggle(${room.id})">Verificar clasificación</button>
-        <span class="feedback" id="verifyFeedback"></span>
-      </div>`;
-  }
-  else if(room.type === 'order'){
-    area.innerHTML = `
-      <div class="challenge-card">
-        <div class="q-text">Arrastra los elementos para ordenarlos de <b>proximal</b> a <b>distal</b>:</div>
-        <div class="order-list" id="orderList">
-          ${shuffle([...room.items]).map((it,i) => `
-            <div class="order-item" draggable="true" data-id="${it.id}">
-              <span class="handle">⠿</span> ${it.label}
-            </div>`).join('')}
-        </div>
-      </div>
-      <div class="verify-row">
-        <button class="btn" onclick="verifyOrder(${room.id})">Verificar orden</button>
-        <span class="feedback" id="verifyFeedback"></span>
-      </div>`;
-    enableDrag();
-  }
-  else if(room.type === 'match-select'){
-    area.innerHTML = `
-      <div class="challenge-card">
-        ${room.items.map((it,i) => `
-          <div class="q-text" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
-            <span>${it.name}</span>
-            <select class="match-select" id="ms-${i}">
-              <option value="">Selecciona...</option>
-              ${it.options.map(o => `<option value="${escapeStr(o)}">${o}</option>`).join('')}
-            </select>
-          </div>
-        `).join('')}
-      </div>
-      <div class="verify-row">
-        <button class="btn" onclick="verifyMatch(${room.id})">Verificar relación</button>
-        <span class="feedback" id="verifyFeedback"></span>
-      </div>`;
-  }
-}
-
-// ---- MCQ set ----
-let mcqSelections = {};
-function selectMcq(qi, btn, value){
-  mcqSelections[qi] = value;
-  const group = document.getElementById(`opts-${qi}`);
-  group.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-function verifyMcqSet(roomId){
-  const room = ROOMS.find(r => r.id === roomId);
-  let correct = 0;
-  room.questions.forEach((q, qi) => {
-    const group = document.getElementById(`opts-${qi}`);
-    const selected = mcqSelections[qi];
-    group.querySelectorAll('.opt-btn').forEach(b => {
-      b.disabled = true;
-      if(b.textContent === q.answer) b.classList.add('correct');
-      else if(b.textContent === selected && selected !== q.answer) b.classList.add('incorrect');
-    });
-    if(selected === q.answer) correct++;
-  });
-  const fb = document.getElementById('verifyFeedback');
-  if(correct === room.questions.length){
-    fb.textContent = `Correcto: ${correct}/${room.questions.length}. Candado desbloqueable.`;
-    fb.className = 'feedback good';
-    unlockLockPanel(room);
-  } else {
-    fb.textContent = `${correct}/${room.questions.length} correctas. Perdiste una vida 🦴. Revisa las marcadas en rojo e inténtalo de nuevo.`;
-    fb.className = 'feedback bad';
-    loseLife();
-    setTimeout(() => { mcqSelections = {}; if(lives > 0) renderChallenge(room); }, 1800);
-  }
-}
-
-// ---- Toggle classify ----
-let toggleSelections = {};
-function selectToggle(i, value){
-  toggleSelections[i] = value;
-  document.getElementById(`tc-${i}-axial`).classList.toggle('selected', value === 'Axial');
-  document.getElementById(`tc-${i}-apendicular`).classList.toggle('selected', value === 'Apendicular');
-}
-function verifyToggle(roomId){
-  const room = ROOMS.find(r => r.id === roomId);
-  let correct = 0;
-  room.items.forEach((it, i) => {
-    const chosen = toggleSelections[i];
-    const axialBtn = document.getElementById(`tc-${i}-axial`);
-    const apeBtn = document.getElementById(`tc-${i}-apendicular`);
-    [axialBtn, apeBtn].forEach(b => b.disabled = true);
-    const correctBtn = it.answer === 'Axial' ? axialBtn : apeBtn;
-    correctBtn.classList.add('correct');
-    if(chosen && chosen !== it.answer){
-      (it.answer === 'Axial' ? apeBtn : axialBtn).classList.add('incorrect');
-    }
-    if(chosen === it.answer) correct++;
-  });
-  const fb = document.getElementById('verifyFeedback');
-  if(correct === room.items.length){
-    fb.textContent = `Correcto: ${correct}/${room.items.length}. Candado desbloqueable.`;
-    fb.className = 'feedback good';
-    unlockLockPanel(room);
-  } else {
-    fb.textContent = `${correct}/${room.items.length} correctas. Perdiste una vida 🦴. Inténtalo de nuevo.`;
-    fb.className = 'feedback bad';
-    loseLife();
-    setTimeout(() => { toggleSelections = {}; if(lives > 0) renderChallenge(room); }, 1800);
-  }
-}
-
-// ---- Order ----
-let dragSrc = null;
-function enableDrag(){
-  const list = document.getElementById('orderList');
-  list.querySelectorAll('.order-item').forEach(item => {
-    item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging'); });
-    item.addEventListener('dragend', e => item.classList.remove('dragging'));
-    item.addEventListener('dragover', e => {
-      e.preventDefault();
-      const dragging = list.querySelector('.dragging');
-      const after = getDragAfterElement(list, e.clientY);
-      if(after == null) list.appendChild(dragging);
-      else list.insertBefore(dragging, after);
-    });
-  });
-}
-function getDragAfterElement(container, y){
-  const items = [...container.querySelectorAll('.order-item:not(.dragging)')];
-  return items.reduce((closest, child) => {
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height/2;
-    if(offset < 0 && offset > closest.offset) return { offset, element: child };
-    else return closest;
-  }, { offset: -Infinity }).element;
-}
-function verifyOrder(roomId){
-  const room = ROOMS.find(r => r.id === roomId);
-  const list = document.getElementById('orderList');
-  const currentIds = [...list.querySelectorAll('.order-item')].map(el => el.dataset.id);
-  const fb = document.getElementById('verifyFeedback');
-  const isCorrect = JSON.stringify(currentIds) === JSON.stringify(room.correctOrder);
-  if(isCorrect){
-    fb.textContent = 'Orden correcto. Candado desbloqueable.';
-    fb.className = 'feedback good';
-    list.querySelectorAll('.order-item').forEach(el => el.setAttribute('draggable', 'false'));
-    unlockLockPanel(room);
-  } else {
-    fb.textContent = 'El orden aún no es correcto. Perdiste una vida 🦴. Ajusta y vuelve a verificar.';
-    fb.className = 'feedback bad';
-    loseLife();
-  }
-}
-
-// ---- Match select ----
-function verifyMatch(roomId){
-  const room = ROOMS.find(r => r.id === roomId);
-  let correct = 0;
-  room.items.forEach((it, i) => {
-    const sel = document.getElementById(`ms-${i}`);
-    sel.classList.remove('correct','incorrect');
-    if(sel.value === it.answer){ sel.classList.add('correct'); correct++; }
-    else if(sel.value !== ''){ sel.classList.add('incorrect'); }
-  });
-  const fb = document.getElementById('verifyFeedback');
-  if(correct === room.items.length){
-    fb.textContent = `Correcto: ${correct}/${room.items.length}. Candado desbloqueable.`;
-    fb.className = 'feedback good';
-    unlockLockPanel(room);
-  } else {
-    fb.textContent = `${correct}/${room.items.length} correctas. Perdiste una vida 🦴. Ajusta las marcadas en rojo.`;
-    fb.className = 'feedback bad';
-    loseLife();
-  }
-}
-
-// ---- Lock panel ----
-function unlockLockPanel(room){
-  const panel = document.getElementById('lockPanel');
-  panel.classList.remove('disabled');
-  document.getElementById('lockHint').textContent = room.hint;
-  document.getElementById('lockInput').disabled = false;
-  document.getElementById('lockBtn').disabled = false;
-}
-function tryUnlock(roomId){
-  const room = ROOMS.find(r => r.id === roomId);
-  const input = document.getElementById('lockInput');
-  const fb = document.getElementById('lockFeedback');
-  const value = input.value.trim().toUpperCase().replace(/\s+/g,'');
-  if(value === room.code){
-    fb.textContent = '✓ Candado abierto. Avanzando a la siguiente sala...';
-    fb.className = 'feedback good';
-    setTimeout(() => goToRoom(currentRoom + 1), 1000);
-  } else {
-    fb.textContent = '✗ Código incorrecto. Perdiste una vida 🦴. Revisa la pista.';
-    fb.className = 'feedback bad';
-    loseLife();
-  }
-}
-
-// ---- utils ----
-function escapeStr(s){ return s.replace(/'/g, "\\'"); }
 function shuffle(arr){
-  for(let i = arr.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i+1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
   }
-  return arr;
+  return a;
 }
 
-renderSpine();
-render();
+let fullDeck = shuffle(buildDeck());
+let deck = fullDeck;
+let currentMode='all';
+let idx=0;
+let flipped=false;
+let score=0;
+let answered=new Array(deck.length).fill(false);
+
+const cardEl=document.getElementById('card');
+const faceFront=document.getElementById('faceFront');
+const faceBack=document.getElementById('faceBack');
+const counter=document.getElementById('counter');
+const scoreDisplay=document.getElementById('scoreDisplay');
+const progressFill=document.getElementById('progressFill');
+const deckArea=document.getElementById('deckArea');
+const finishArea=document.getElementById('finishArea');
+const finalScore=document.getElementById('finalScore');
+
+function renderCard(){
+  flipped=false;
+  cardEl.classList.remove('flipped');
+  const item=deck[idx];
+  const isN2S = item.type==='n2s';
+  faceFront.innerHTML = `
+    <div class="tag ${isN2S?'':'reverse'}">${isN2S? 'NOMBRE → ESTRUCTURA' : 'ESTRUCTURA → NOMBRE'}</div>
+    ${isN2S
+      ? `<div class="name-display">${item.name}</div><div class="name-sub">¿Cómo es su estructura?</div>`
+      : `<div class="struct-display">${item.svg}</div><div class="name-sub">¿Cómo se llama?</div>`
+    }
+    <div class="hint">Toca para ver la respuesta</div>
+  `;
+  faceBack.innerHTML = `
+    <div class="tag ${isN2S?'':'reverse'}">RESPUESTA</div>
+    ${isN2S
+      ? `<div class="struct-display">${item.svg}</div><div class="name-sub">${item.name}</div>`
+      : `<div class="name-display">${item.name}</div>`
+    }
+    <div class="hint">Toca para volver</div>
+  `;
+  counter.textContent = `Tarjeta ${idx+1} / ${deck.length}`;
+  scoreDisplay.textContent = `✔ ${score}`;
+  progressFill.style.width = `${(idx/deck.length)*100}%`;
+  document.getElementById('prevBtn').disabled = idx===0;
+  deckArea.style.display='block';
+  finishArea.style.display='none';
+}
+
+function flipCard(){
+  flipped=!flipped;
+  cardEl.classList.toggle('flipped', flipped);
+}
+
+function nextCard(){
+  if(idx < deck.length-1){
+    idx++;
+    renderCard();
+  } else {
+    showFinish();
+  }
+}
+function prevCard(){
+  if(idx>0){ idx--; renderCard(); }
+}
+function showFinish(){
+  deckArea.style.display='none';
+  finishArea.style.display='block';
+  finalScore.textContent = `Acertaste ${score} de ${deck.length} tarjetas.`;
+  progressFill.style.width='100%';
+}
+
+cardEl.addEventListener('click', flipCard);
+
+document.getElementById('knowBtn').addEventListener('click', ()=>{
+  if(!answered[idx]){ score++; answered[idx]=true; }
+  nextCard();
+});
+document.getElementById('dontKnowBtn').addEventListener('click', ()=>{
+  nextCard();
+});
+document.getElementById('nextBtn').addEventListener('click', nextCard);
+document.getElementById('prevBtn').addEventListener('click', prevCard);
+document.getElementById('shuffleBtn').addEventListener('click', ()=>{
+  deck = shuffle(deck);
+  idx=0; score=0; answered=new Array(deck.length).fill(false);
+  renderCard();
+});
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  deck = shuffle(deck);
+  idx=0; score=0; answered=new Array(deck.length).fill(false);
+  renderCard();
+});
+
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode = btn.dataset.mode;
+    let base = fullDeck;
+    if(currentMode==='n2s') base = fullDeck.filter(c=>c.type==='n2s');
+    else if(currentMode==='s2n') base = fullDeck.filter(c=>c.type==='s2n');
+    deck = shuffle(base);
+    idx=0; score=0; answered=new Array(deck.length).fill(false);
+    renderCard();
+  });
+});
+
+renderCard();
 </script>
 </body>
 </html>
